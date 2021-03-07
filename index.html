@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style type="text/css">
+      
+      @page{
+  size: letter portrait;
+  margin: 0;
+}
+
+*{
+  box-sizing: border-box;
+}
+
+:root{
+  --page-width: 8.5in;
+  --page-height: 11in;
+  --main-width: 6.4in;
+  --sidebar-width: calc(var(--page-width) - var(--main-width));
+  --decorator-horizontal-margin: 0.2in;
+
+  --sidebar-horizontal-padding: 0.2in;
+
+  /* XXX: using px for very good precision control */
+  --decorator-outer-offset-top: 10px;
+  --decorator-outer-offset-left: -5.5px;
+  --decorator-border-width: 1px;
+  --decorator-outer-dim: 9px;
+  --decorator-border: 1px solid #ccc;
+
+  --row-blocks-padding-top: 5pt;
+  --date-block-width: 0.6in;
+
+  --main-blocks-title-icon-offset-left: -19pt;
+}
+
+body{
+  width: var(--page-width);
+  height: var(--page-height);
+  margin: 0;
+  font-family: "Open Sans", sans-serif; 
+  font-weight: 300;
+  line-height: 1.3;
+  color: #444;
+  hyphens: auto;
+}
+
+h1, h2, h3{
+  margin: 0;
+  color: #000;
+}
+
+li{
+  list-style-type: none;
+}
+
+#main{
+  float: left;
+  width: var(--main-width);
+  padding: 0.25in 0.25in 0 0.25in;
+  font-size: 7pt;
+}
+
+#sidebar{
+  float: right;
+  position: relative; /* for disclaimer */
+  width: var(--sidebar-width);
+  height: 100%;
+  padding: 0.6in var(--sidebar-horizontal-padding);
+  background-color: #f2f2f2;
+  font-size: 8.5pt;
+}
+
+/* main */
+
+/** big title **/
+#title, h1, h2{
+  text-transform: uppercase;
+}
+
+#title{
+  position: relative;
+  left: 0.55in;
+  margin-bottom: 0.3in;
+  line-height: 1.2;
+}
+
+#title h1{
+  font-weight: 300;
+  font-size: 18pt;
+  line-height: 1.5;
+}
+
+#title h1 strong{
+  margin: auto 2pt auto 4pt;
+  font-weight: 600;
+}
+
+.subtitle{
+  font-size: 8pt;
+}
+
+/*** categorial blocks ***/
+
+.main-block{
+  margin-top: 0.1in;
+}
+
+#main h2{
+  position: relative;
+  top: var(--row-blocks-padding-top);
+  /* XXX: 0.5px for aligning fx printing */
+  left: calc((var(--date-block-width) + var(--decorator-horizontal-margin)));
+  font-weight: 400;
+  font-size: 11pt;
+  color: #555;
+}
+
+#main h2 > i{
+  /* use absolute position to prevent icon's width from misaligning title */
+  /* assigning a fixed width here is no better due to needing to align decorator
+     line too */
+  position: absolute;
+  left: var(--main-blocks-title-icon-offset-left);
+  z-index: 1; /* over decorator line */
+  color: #444;
+}
+
+#main h2::after{ /* extends the decorator line */
+  height: calc(var(--row-blocks-padding-top) * 2);
+  position: relative;
+  top: calc(-1 * var(--row-blocks-padding-top));
+  /* XXX: 0.5px for aligning fx printing */
+  left: calc(-1 * var(--decorator-horizontal-margin));
+  display: block;
+  border-left: var(--decorator-border);
+  z-index: 0;
+  line-height: 0;
+  font-size: 0;
+  content: ' ';
+}
+
+/**** minor tweaks on the icon fonts ****/
+#main h2 > .fa-graduation-cap{
+  left: calc(var(--main-blocks-title-icon-offset-left) - 2pt);
+  top: 2pt;
+}
+
+#main h2 > .fa-suitcase{
+  top: 1pt;
+}
+
+#main h2 > .fa-folder-open{
+  top: 1.5pt;
+}
+
+/**** individual row blocks (date - decorator - details) ****/
+
+.blocks{
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.blocks > div{
+  padding-top: var(--row-blocks-padding-top);
+}
+
+.date{
+  flex: 0 0 var(--date-block-width);
+  padding-top: calc(var(--row-blocks-padding-top) + 2.5pt) !important;
+  padding-right: var(--decorator-horizontal-margin);
+  font-size: 7pt;
+  text-align: right;
+  line-height: 1;
+}
+
+.date span{
+  display: block;
+}
+
+.date span:nth-child(2)::before{
+  position: relative;
+  top: 1pt;
+  right: 5.5pt;
+  display: block;
+  height: 10pt;
+  content: '|';
+}
+
+.decorator{
+  flex: 0 0 0;
+  position: relative;
+  width: 2pt;
+  min-height: 100%;
+  border-left: var(--decorator-border);
+}
+
+/*
+ * XXX: Use two filled circles to achieve the circle-with-white-border effect.
+ * The normal technique of only using one pseudo element and
+ * border: 1px solid white; style makes firefox erroneously either:
+ * 1) overflows the grayshade background (if no background-clip is set), or
+ * 2) shows decorator line which should've been masked by the white border
+ *
+ */
+
+.decorator::before{
+  position: absolute;
+  top: var(--decorator-outer-offset-top);
+  left: var(--decorator-outer-offset-left);
+  content: ' ';
+  display: block;
+  width: var(--decorator-outer-dim);
+  height: var(--decorator-outer-dim);
+  border-radius: calc(var(--decorator-outer-dim) / 2);
+  background-color: #fff;
+}
+
+.decorator::after{
+  position: absolute;
+  top: calc(var(--decorator-outer-offset-top) + var(--decorator-border-width));
+  left: calc(var(--decorator-outer-offset-left) + var(--decorator-border-width));
+  content: ' ';
+  display: block;
+  width: calc(var(--decorator-outer-dim) - (var(--decorator-border-width) * 2));
+  height: calc(var(--decorator-outer-dim) - (var(--decorator-border-width) * 2));
+  border-radius: calc((var(--decorator-outer-dim) - (var(--decorator-border-width) * 2)) / 2);
+  background-color: #555;
+}
+
+.blocks:last-child .decorator{ /* slightly shortens it */
+  margin-bottom: 0.25in;
+}
+
+/***** fine-tunes on the details block where the real juice is *****/
+
+.details{
+  flex: 1 0 0;
+  padding-left: var(--decorator-horizontal-margin);
+  padding-top: calc(var(--row-blocks-padding-top) - 0.5pt) !important; /* not sure why but this is needed for better alignment */
+}
+
+.details header{
+  color: #000;
+}
+
+.details h3{
+  font-size: 9pt;
+}
+
+.main-block:not(.concise) .details div{
+  margin: 0.18in 0 0.1in 0; 
+}
+
+.main-block:not(.concise) .blocks:last-child .details div{
+  margin-bottom: 0;
+}
+
+.main-block.concise .details div:not(.concise){
+  /* use padding to work around the fact that margin doesn't affect floated
+     neighboring elements */
+  padding: 0.05in 0 0.07in 0;
+}
+
+.details .place{
+  float: left;
+  font-size: 7.5pt;
+}
+
+.details .location{
+  float: right;
+}
+
+.details div{
+  clear: both;
+}
+
+.details .location::before{
+  display: inline-block;
+  position: relative;
+  right: 3pt;
+  top: 0.25pt;
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  content: "\f041";
+}
+
+/***** fine-tunes on the lists... *****/
+
+#main ul{
+  padding-left: 0.07in;
+  margin: 0.08in 0;
+}
+
+#main li{
+  margin: 0 0 0.025in 0;
+}
+
+/****** customize list symbol style ******/
+#main li::before{
+  position: relative;
+  margin-left: -4.25pt;
+  content: '• ';
+}
+
+.details .concise ul{
+  margin: 0 !important;
+  -webkit-columns: 2;
+  -moz-columns: 2;
+  columns: 2;
+}
+
+.details .concise li{
+  margin: 0 !important;
+}
+
+.details .concise li{
+  margin-left: 0 !important;
+}
+
+
+
+/* sidebar */
+
+#sidebar h1{
+  font-weight: 400;
+  font-size: 11pt;
+}
+
+.side-block{
+  margin-top: 0.5in; 
+}
+
+#contact ul{
+  margin-top: 0.05in;
+  padding-left: 0;
+  font-family: "Source Code Pro";
+  font-weight: 400;
+  line-height: 1.75;
+}
+
+#contact li > i{
+  width: 9pt; /* for text alignment */
+  text-align: right;
+}
+
+#skills{
+  line-height: 1.5;
+}
+
+#skills ul{
+  margin: 0.05in 0 0.15in;
+  padding: 0;
+}
+
+#disclaimer{
+  position: absolute;
+  bottom: var(--sidebar-horizontal-padding);
+  right: var(--sidebar-horizontal-padding);
+  font-size: 7.5pt;
+  font-style: italic;
+  line-height: 1.1;
+  text-align: right;
+  color: #777;
+}
+
+#disclaimer code{
+  color: #666;
+  font-family: "Source Code Pro";
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+
+    </style>
+  </head>
+  <body lang="en">
+    <section id="main">
+      <header id="title">
+        <h1>Reetpal Singh</h1>
+        <span class="subtitle">Incoming Summer Analyst <b>@ Goldman Sachs</b> | Competitive Programmer</span>
+      </header>
+      <section class="main-block">
+        <h2>
+          <i class="fa fa-folder-open"></i> Selected Projects
+        </h2>
+        <section class="blocks">
+          <div class="date">
+            <span>2020</span><span>2020</span>
+          </div>
+          <div class="decorator">
+          </div>
+          <div class="details">
+            <header>
+              <h3>Task-Organizer</h3>
+            </header>
+            <div>
+              <ul>
+                <li>Built and deployed a NPM package usingNodeJSfor command line habitat.</li>
+                <li>Manages tasks, notes, boards and bookmarks from terminal.</li>
+                <li>Provides timeline and progress overview using simple and minimal syntax.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+        <section class="blocks">
+          <div class="date">
+            <span>2020</span><span>2020</span>
+          </div>
+          <div class="decorator">
+          </div>
+          <div class="details">
+            <header>
+
+
+               <header>
+              <h3>Sorting and Searching Visualizer</h3>
+            </header>
+            <div>
+              <ul>
+                <li>Built and deployed a VanillaJS spplication for visualizing searching and sorting algorithms.</li>
+                <li>Implemented 7 different algorithms and a terminal based GUI for routing.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+        <section class="blocks">
+          <div class="date">
+            <span>2020</span><span>2020</span>
+          </div>
+          <div class="decorator">
+          </div>
+          <div class="details">
+            <header>
+
+
+
+               <header>
+              <h3>Graph Library</h3>
+            </header>
+            <div>
+              <ul>
+                <li>Built a Graph data structure library along with different graph algorithms.</li>
+                <li>Applied C++ STL containers and Object Oriented Programming.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+        <section class="blocks">
+          <div class="date">
+            <span>2021</span><span>2021</span>
+          </div>
+          <div class="decorator">
+          </div>
+          <div class="details">
+            <header>
+
+
+
+               <header>
+              <h3>Smart Tic-Tac-Toe</h3>
+            </header>
+            <div>
+              <ul>
+                <li>Built an unbeatable tic-tac-toe game using the ​Minimax algorithm​ implemented
+in C++.</li>
+                <li>Uses ​alpha-beta pruning​ optimization to decrease the number of nodes that are
+evaluated by the Minimax algorithm in its search tree making the algorithm fast.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+        <section class="blocks">
+          <div class="date">
+            <span>2021</span><span>2021</span>
+          </div>
+          <div class="decorator">
+          </div>
+          <div class="details">
+            <header>
+
+
+              <h3>Serializable Trie Data structure</h3>
+            </header>
+            <div>
+              <ul>
+                <li>It is an implementation of the trie data structure that can be serialized and written to a file. This file format of the trie can then be deserialized to obtain the trie.</li>
+
+              </ul>
+            </div>
+          </div>
+        </section>
+        <h2>
+          <i class="fa fa-graduation-cap"></i> Education
+        </h2>
+        <section class="blocks">
+          <div class="date">
+            <span>2018</span><span>2022</span>
+          </div>
+          <div class="decorator">
+          </div>
+          <div class="details">
+            <header>
+              <h3>B.E. in Electronics & Computer Engineering</h3>
+              <span class="place">Thapar Institute of Engg. & Tech.</span>
+              <span class="location">Patiala, India</span>
+            </header>
+          </div>
+        </section>
+            </div>
+          </div>
+        </section>
+      </section>
+    </section>
+    <aside id="sidebar">
+      <div class="side-block" id="contact">
+          <h1>
+          coursework
+        </h1>
+        <ul>
+          <li><i class="fa fa-linkedin"></i> Data Structures and Algorithms</li>
+          <li><i class="fa fa-linkedin"></i> Operating Systems</li>
+          <li><i class="fa fa-linkedin"></i> Object Oriented Programming</li>
+          <li><i class="fa fa-linkedin"></i> Graph Theory</li>
+          <li><i class="fa fa-linkedin"></i> Computer Networks</li>
+          <li><i class="fa fa-linkedin"></i> Linear Algebra</li>
+          <li><i class="fa fa-linkedin"></i> Probability</li>
+          <li><i class="fa fa-linkedin"></i> Optimization Techniques</li>
+
+        </ul>
+      </div>
+      <div class="side-block" id="skills">
+        <h1>
+          Languages
+        </h1>
+        <ul>
+          <li>C/C++</li>
+          <li>Python</li>
+          <li>Matlab</li>
+          <li>Javascript</li>
+          <li>Latex</li>
+        </ul>
+        <h1>
+          Web Technologies
+        </h1>
+        <ul>
+          <li>HTML</li>
+          <li>CSS</li>
+          <li>React.js</li>
+          <li>jQuery</li>
+          <li>Node.js</li>
+        </ul>
+         <h1>
+          Databases
+        </h1>
+        <ul>
+          <li>MySQL</li>
+          <li>SQLilte</li>
+          <li>MongoDB</li>
+        </ul>
+        <h1>
+          Others
+        </h1>
+        <ul>
+          <li>Heroku</li>
+          <li>Pandas</li>
+          <li>Numpy</li>
+          <li>Matplotlib</li>
+        </ul>
+      </div>
+    </aside>
+  </body>
+</html>
